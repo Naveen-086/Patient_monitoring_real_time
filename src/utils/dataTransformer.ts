@@ -1,6 +1,14 @@
 import { PatientData, Alert, VitalSigns } from '../types';
 import { ApiPatient, ApiAlert } from '../services/api';
 
+// Tamil names to match the Kafka producer
+const TAMIL_NAMES = [
+  "Arun Kumar", "Suresh Babu", "Karthik Raja", "Vigneshwaran", "Prakash Raj",
+  "Ramesh Kannan", "Saravanan", "Senthil Kumar", "Manikandan", "Anand Raj",
+  "Lakshmi Priya", "Divya Bharathi", "Kavya Shree", "Meena Kumari", "Priya Dharshini",
+  "Nandhini", "Revathi", "Sangeetha", "Aishwarya", "Uma Maheswari"
+];
+
 // Transform API patient data to frontend format
 export const transformApiPatient = (apiPatient: ApiPatient): PatientData => {
   const vitals: VitalSigns = {
@@ -34,16 +42,9 @@ export const transformApiPatient = (apiPatient: ApiPatient): PatientData => {
     oxygenSaturation: [95, 100] as [number, number]
   };
 
-  // Generate a patient name based on ID
-  const patientNames = [
-    'John Smith', 'Maria Garcia', 'David Chen', 'Sarah Johnson', 'Michael Brown',
-    'Lisa Wilson', 'Robert Davis', 'Jennifer Miller', 'William Jones', 'Elizabeth Taylor',
-    'James Anderson', 'Mary Thomas', 'Christopher Jackson', 'Patricia White', 'Daniel Harris',
-    'Linda Martin', 'Matthew Thompson', 'Barbara Garcia', 'Anthony Martinez', 'Susan Robinson'
-  ];
-  
-  const nameIndex = parseInt(apiPatient.id.replace(/\D/g, '')) % patientNames.length;
-  const name = patientNames[nameIndex] || `Patient ${apiPatient.id}`;
+  // Generate Tamil patient name based on ID
+  const nameIndex = parseInt(apiPatient.id.replace(/\D/g, '')) % TAMIL_NAMES.length;
+  const name = TAMIL_NAMES[nameIndex] || `Patient ${apiPatient.id}`;
 
   // Generate room number based on patient ID
   const roomNumber = `${apiPatient.status === 'critical' ? 'ICU' : 'Ward'}-${100 + (parseInt(apiPatient.id.replace(/\D/g, '')) % 400)}`;
@@ -91,10 +92,6 @@ export const transformApiAlert = (apiAlert: ApiAlert): Alert => {
 
 // Generate patient name from ID consistently
 export const generatePatientName = (patientId: string): string => {
-  const names = [
-    'John Smith', 'Maria Garcia', 'David Chen', 'Sarah Johnson', 'Michael Brown',
-    'Lisa Wilson', 'Robert Davis', 'Jennifer Miller', 'William Jones', 'Elizabeth Taylor'
-  ];
-  const index = parseInt(patientId.replace(/\D/g, '')) % names.length;
-  return names[index] || `Patient ${patientId}`;
+  const index = parseInt(patientId.replace(/\D/g, '')) % TAMIL_NAMES.length;
+  return TAMIL_NAMES[index] || `Patient ${patientId}`;
 };
